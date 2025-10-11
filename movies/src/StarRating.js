@@ -1,4 +1,6 @@
 import { useState } from "react";
+import PropTypes from "prop-types"
+//import { propTypes } from "react-bootstrap/esm/Image";
 
 const containerStyle ={
     display: "flex",
@@ -10,6 +12,13 @@ const starContainerStyle ={
     display: "flex",
     gap: "4px",
 };
+// This is how to use PropTypes to strictly enforce a specific type for the input.
+StarRating.propTypes ={
+    maxRating: PropTypes.number,
+    color: PropTypes.string,
+    size: PropTypes.string,
+    
+}
 
 // Setting MaxRating to 5 gives the default rating for the prop so that if no prop is passed to the reusable component, then it will atleast default to 5.
 export default function StarRating ({
