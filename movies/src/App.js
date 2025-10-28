@@ -327,7 +327,7 @@ function MovieDetails({ selectedID, onCloseMovie }) {
       setMovie(data);
     }
     getMovieDetails();
-  }, [])
+  }, [selectedID])
 
   return(
     <div className="details">
