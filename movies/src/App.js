@@ -117,10 +117,13 @@ export default function App() {
       <Main>
         <Box>
           {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
-          {isLoading && <Loader />}
-          {!isLoading && !error && <MovieList 
+          {isLoading && 
+          <Loader />}
+          {!isLoading && !error && 
+          <MovieList 
           movies={movies} onSelectedMovie={handleSelectedMovie}/>}
-          {error && <ErrorMessage message={error} />}
+          {error && 
+          <ErrorMessage message={error} />}
         </Box>
         <Box>
           {
@@ -129,6 +132,7 @@ export default function App() {
                 selectedID={selectedID} 
                 onCloseMovie={handleCloseMovie}
                 onAddWatched={handleAddWatched}
+                watched={watched}
                 /> 
             ) : (
               <>
@@ -308,9 +312,13 @@ function Summary({watched}) {
   )
 };
 
-function MovieDetails({ selectedID, onCloseMovie, onAddWatched }) {
+function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [userRating, setUserRating] = useState('')
+
+  //This watched prop is an array of movies that have been watched. Map over this array and see if the selected movie is included in this array already.
+  const isWatched = watched.map((movie) => movie.imdbID).includes(selectedID);
 
   const{
     Title: title,
@@ -332,7 +340,8 @@ function handleAdd(){
     year,
     poster,
     imdbRating: Number(imdbRating),
-    runtime: Number(runtime.split(" ").at(0))
+    runtime: Number(runtime.split(" ").at(0)),
+    userRating, 
   };
 
   onAddWatched(newWatchedMovie);
@@ -381,8 +390,20 @@ function handleAdd(){
 
       <section>
         <div className="rating">
-          <StarRating maxRating={10} size={24}/>
-          <button className="btn-add" onClick={handleAdd}>+ Add to List</button>
+        {!isWatched ? 
+        <>
+          <StarRating 
+            maxRating={10} 
+            size={24}
+            onSetRating={setUserRating}
+          />
+          {userRating > 0 && (
+            <button className="btn-add" onClick={handleAdd}>+ Add to List</button>
+          )}
+        </> : 
+        (
+          <p>You rated this movie</p>
+        )}
         </div>
         <p><em>{plot}</em></p>
         <p>Starring {actors}</p>
