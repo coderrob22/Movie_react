@@ -74,6 +74,10 @@ export default function App() {
     setWatched((watched) => [...watched, movie])
   }
 
+  function handleDeleteWatched(id){
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+  }
+
   useEffect(function() {
     async function fetchMovies() {
       try {
@@ -137,7 +141,10 @@ export default function App() {
             ) : (
               <>
                 <Summary watched={watched}/>
-                <WatchedMoviesList watched={watched}/>
+                <WatchedMoviesList 
+                  watched={watched}
+                  onDeleteWatched={handleDeleteWatched}
+                />
               </>
             )}
         </Box>
@@ -297,11 +304,11 @@ function Summary({watched}) {
                   </p>
                   <p>
                     <span>⭐️</span>
-                    <span>{avgImdbRating}</span>
+                    <span>{avgImdbRating.toFixed(2)}</span>
                   </p>
                   <p>
                     <span>🌟</span>
-                    <span>{avgUserRating}</span>
+                    <span>{avgUserRating.toFixed(2)}</span>
                   </p>
                   <p>
                     <span>⏳</span>
@@ -319,6 +326,7 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
 
   //This watched prop is an array of movies that have been watched. Map over this array and see if the selected movie is included in this array already.
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedID);
+  const watchedUserRating = watched.find((movie) => movie.imdbID === selectedID)?.userRating
 
   const{
     Title: title,
@@ -402,7 +410,7 @@ function handleAdd(){
           )}
         </> : 
         (
-          <p>You rated this movie</p>
+          <p>You rated this movie {watchedUserRating}</p>
         )}
         </div>
         <p><em>{plot}</em></p>
@@ -415,17 +423,21 @@ function handleAdd(){
   )
 };
 
-function WatchedMoviesList({watched}){
+function WatchedMoviesList({watched, onDeleteWatched}){
   return(
     <ul className="list">
                 {watched.map((movie) => (
-                  <WatchedMovie movie={movie} key={movie.imdbID}/>
+                  <WatchedMovie 
+                    movie={movie} 
+                    key={movie.imdbID}
+                    onDeleteWatched={onDeleteWatched}
+                  />
                 ))}
               </ul>
   )
 }
 
-function WatchedMovie({movie}){
+function WatchedMovie({movie, onDeleteWatched}){
   return(
     <li>
                     <img src={movie.poster} alt={`${movie.title} poster`} />
@@ -443,6 +455,9 @@ function WatchedMovie({movie}){
                         <span>⏳</span>
                         <span>{movie.runtime} min</span>
                       </p>
+                      <button 
+                        className="btn-delete" 
+                        onClick={() => onDeleteWatched(movie.imdbID)}>X</button>
                     </div>
                   </li>
   )
