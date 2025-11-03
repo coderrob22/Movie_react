@@ -375,6 +375,11 @@ function handleAdd(){
     function() {
       if(!title) return;
       document.title = `Movie | ${title}`;
+
+      //This is the cleanup function, its used to 'clean up' the effects of using the use effect... like side effects
+      return function (){
+        document.title = 'usePopcorn';
+      }
     }, [title]
   );
 
