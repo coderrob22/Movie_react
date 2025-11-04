@@ -78,13 +78,16 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
 
-  useEffect(function() {
+  useEffect(
+    function() {
+      const controller = new AbortController()
     async function fetchMovies() {
       try {
       setIsLoading(true);
       setError("")
+
       const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`, {signal: controller.signal}
       );
 
       // ********************************Error handling **************************************************
@@ -98,7 +101,9 @@ export default function App() {
       setMovies(data.Search);
       setIsLoading(false);
     } catch (err){
-      setError(err.message)
+      if (err.name !== "AbortError"){
+        setError(err.message)
+      }
     } finally {
       setIsLoading(false);
     }
@@ -109,6 +114,11 @@ export default function App() {
     return;
   }
     fetchMovies();
+
+    //Clean up function for the useEffect above, using the abort controller to stop RACE conditions (where based on the keystrokes and data fetching, there are competing requests calling the data and using up network bandwith)
+    return function(){
+      controller.abort();
+    }
   }, [query]);
 
   return (
