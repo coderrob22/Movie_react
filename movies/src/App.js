@@ -367,6 +367,23 @@ function handleAdd(){
 }
 
  useEffect(
+    function(){
+      function callback(x){
+        if(x.code === 'Escape'){
+          onCloseMovie();
+        }
+      }
+      
+      document.addEventListener('keydown', callback )
+      
+      //clean up function
+      return function(){
+        document.removeEventListener('keydown', callback)
+      }
+    }, [onCloseMovie]
+  );
+
+ useEffect(
   function() {
     async function getMovieDetails() {
       setIsLoading(true);
