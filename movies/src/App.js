@@ -78,6 +78,12 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
 
+  //************************ Effect for managing local storage using react useEffects *****************************
+  useEffect(function () {
+    localStorage.setItem("watched", JSON.stringify(watched))
+  },[watched]
+);
+
   useEffect(
     function() {
       const controller = new AbortController()
@@ -351,6 +357,8 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
     Genre: genre,
   } = movie;
 
+const [avgRating, setAvgRating] = useState(0);
+
 function handleAdd(){
   const newWatchedMovie = {
     imdbID: selectedID,
@@ -435,6 +443,8 @@ function handleAdd(){
         </div>
       
       </header>
+
+
 
       <section>
         <div className="rating">
