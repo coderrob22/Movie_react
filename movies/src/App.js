@@ -357,6 +357,15 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState('')
 
+  //useRef declaration and followed by useEffect to update the ref anytime the user updates the ratings without rerender.
+  const countRef = useRef(0);
+
+  useEffect(function (){
+    if (userRating){
+      countRef.current = countRef.current++;
+    }
+  }, [userRating])
+
   //This watched prop is an array of movies that have been watched. Map over this array and see if the selected movie is included in this array already.
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedID);
   const watchedUserRating = watched.find((movie) => movie.imdbID === selectedID)?.userRating
@@ -385,6 +394,7 @@ function handleAdd(){
     imdbRating: Number(imdbRating),
     runtime: Number(runtime.split(" ").at(0)),
     userRating, 
+    countRatingDecisions: countRef.current,
   };
 
   onAddWatched(newWatchedMovie);
