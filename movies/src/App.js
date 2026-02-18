@@ -370,6 +370,14 @@ function handleAdd(){
     getMovieDetails();
   }, [selectedID])
 
+  //The array dependency is necessary to make sure the app refreshes when a new title is passed in otherwise it will only refresh on mount despite picking different movie titles
+  useEffect(
+    function() {
+      if(!title) return;
+      document.title = `Movie | ${title}`;
+    }, [title]
+  );
+
   return(
     <div className="details">
       {isLoading ? (
